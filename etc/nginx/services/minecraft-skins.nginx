@@ -6,10 +6,10 @@ server {
 
     location /MinecraftSkins/ {
         log_not_found off;
-    	alias /var/prologin/minecraft/skins/;
+        alias /var/prologin/minecraft/skins/;
     }
 
-	location ~ ^/MinecraftCloaks/(.*\.png)$ {
+    location ~ ^/MinecraftCloaks/(.*\.png)$ {
         log_not_found off;
         try_files /var/prologin/minecraft/static/default_cape.png;
     }
