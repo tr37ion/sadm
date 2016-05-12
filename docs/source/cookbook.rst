@@ -88,3 +88,22 @@ Adding a machine we don't manage to the user network
     the IP address you manually allocated (if you set the last allocation to
     100, you should assign the IP .100). Wait a minute for the DHCP
     configuration to be synced, and connect the laptop to the network.
+
+Remove a RAID 1
+~~~~~~~~~~~~~~~
+
+The first step is to deactivate and remove the volume group::
+
+  vgchange -a n data
+  vgremove data
+
+Then you have to actually deconstruct the RAID array and zero the superblock
+of each device::
+
+  mdadm --stop /dev/md0
+  mdadm --remove /dev/md0
+  mdadm --zero-superblock /dev/sda2
+  mdadm --zero-superblock /dev/sdb2
+
+If you want to erase the remaining ext4 filesystem on thoses devices, you can
+use fdisk.

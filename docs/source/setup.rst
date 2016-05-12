@@ -733,4 +733,3 @@ to its installation on the target machine::
     is called ``openresty``, all paths and configuration files are the same
     as the official ``nginx`` package, so you should be able to switch between
     the two without changing anything.
-
