@@ -494,7 +494,7 @@ The basic install process is already documented through the
   python install.py rfs
 
 The installation script will bootstrap a basic archlinux system in
-``/export/nfsroot`` with a few packages, a prologin hook that creates tmpfs at
+``/export/nfsroot_staging`` with a few packages, a prologin hook that creates tmpfs at
 ``/var/{log,tmp,spool/mail}``, libprologin and some sadm services
 (udbsync_passwd, udbsync_rootssh and presenced)
 
@@ -503,7 +503,13 @@ You should then install some useful packages for the contestants (see
 
 To install a new package (*never* use arch-chroot on a live nfs export)::
 
-  pacman --root /export/nfsroot -Sy package
+  pacman --root /export/nfsroot_staging -Sy package
+
+Then, update the live nfsroot with::
+
+  ./rfs_sync.sh
+
+This script will also update the other rfs.
 
 Once SDDM is installed (the login manager we use for sadm), you can use this
 command to generate the default Prologin SDDM config and theme::
@@ -514,8 +520,8 @@ TODO: How to sync, hook to generate /var...
 
 Copy the the kernel and initramfs from ``rhfs``::
 
-  scp rhfs:/export/nfsroot/boot/vmlinuz-linux /srv/tftp/kernel
-  scp rhfs:/export/nfsroot/boot/initramfs-linux.img /srv/tftp/initrd
+  scp rhfs:/export/nfsroot_staging/boot/vmlinuz-linux /srv/tftp/kernel
+  scp rhfs:/export/nfsroot_staging/boot/initramfs-linux.img /srv/tftp/initrd
 
 Setting up hfs
 ~~~~~~~~~~~~~~
@@ -641,7 +647,7 @@ Then copy the packages onto ``rhfs``, and install them in the exported
 
 Then, still for the users machines, install ``workernode``::
 
-  arch-chroot /export/nfsroot/
+  arch-chroot /export/nfsroot_staging/
   cd sadm
   python install.py workernode
   systemctl enable workernode

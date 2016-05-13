@@ -36,7 +36,7 @@ arch-chroot "$ROOTFS" bash /root/rfs.sh
 echo 'Give the new system a static nameserver (the gateway)'
 # This is done outside of the chroot because inside, /etc/resolv.conf is bind-mounted
 echo 'domain prolo
-nameserver 192.168.1.254' > /export/nfsroot/etc/resolv.conf
+nameserver 192.168.1.254' > /export/nfsroot_staging/etc/resolv.conf
 
 echo 'Enable and start the services need to serve the rfs'
 cd ../

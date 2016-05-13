@@ -676,7 +676,8 @@ def install_rfs():
     copy('etc/sysctl/rp_filter.conf', '/etc/sysctl.d/rp_filter.conf')
     system('systemctl restart systemd-sysctl')
 
-    rootfs = '/export/nfsroot'
+    mkdir('/export/nfsroot/', mode=0o755)
+    rootfs = '/export/nfsroot_staging'
     subnet = '192.168.0.0/24'
     with cwd('rfs'):
         os.environ['ROOTFS'] = rootfs
@@ -688,11 +689,11 @@ def install_rfs():
 
 
 def install_sddmcfg():
-    copy('etc/sddm/sddm.conf', '/export/nfsroot/etc/sddm.conf', mode=0o644)
+    copy('etc/sddm/sddm.conf', '/export/nfsroot_staging/etc/sddm.conf', mode=0o644)
     copy('etc/sddm/scripts/Xsetup',
-         '/export/nfsroot/usr/share/sddm/scripts/Xsetup', mode=0o755)
+         '/export/nfsroot_staging/usr/share/sddm/scripts/Xsetup', mode=0o755)
     copytree('etc/sddm/themes/prologin',
-             '/export/nfsroot/usr/share/sddm/themes/prologin',
+             '/export/nfsroot_staging/usr/share/sddm/themes/prologin',
              dir_mode=0o755, file_mode=0o644)
 
 
