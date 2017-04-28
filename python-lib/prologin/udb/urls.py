@@ -17,6 +17,7 @@
 
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from prologin.udb import views
 
@@ -26,6 +27,7 @@ set_admin_title(admin, "User Database")
 urlpatterns = [
     url(r'', include('django_prometheus.urls')),
     url(r'', include(admin.site.urls)),
+    url(r'^passwd/$', login_required(views.PasswordChangeView.as_view()))
 ]
 
 urlpatterns += staticfiles_urlpatterns()

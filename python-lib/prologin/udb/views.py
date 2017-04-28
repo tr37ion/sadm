@@ -21,6 +21,9 @@ import prologin.udb.receivers  # To connect our receivers
 from prologin.udb.models import User
 from prologin.utils.django import check_filter_fields
 
+from django.http import HttpResponse
+from django.views import View
+
 CFG = prologin.config.load('udb-client-auth')
 
 
@@ -46,3 +49,16 @@ class UDBServer(prologin.rpc.server.BaseRPCApp):
     @prologin.rpc.remote_method
     async def query_private(self, **kwargs):
         return self.get_users(**kwargs)
+
+
+class PasswordChangeView(View):
+    def post(self, request, *args, **kwargs):
+        password = request.POST.get('password')
+
+        if password is None or len(password) > 64:
+            return HttpResponse(status=400)
+
+        user = request.user
+        user.password = password
+        user.save()
+        return HttpResponse(status=200)
