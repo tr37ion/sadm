@@ -35,25 +35,18 @@ set intf netX
 
 set tab:int8 9
 echo -- Waiting for an LLDP packet to arrive...
-set count:int32 0
+set lldp_tries:int32 -1
 :retry_poll_lldp
+  inc lldp_tries
   iseq ${src} ${${intf}.lldp/lldpsource} || goto parse_lldp
   sleep 1
-  inc count
-iseq ${count} ${timeout} || goto retry_poll_lldp
-clear count
+iseq ${lldp_tries} ${timeout} || goto retry_poll_lldp
+clear lldp_tries
 
 echo -- Timed out waiting for an LLDP packet
 goto alien
 
 :parse_lldp
-echo -- Got an LLDP packet from ${${intf}.lldp/lldpsource}
-
-echo -- LLDP CHASSIS ID: ${${intf}.lldp/chassisid}
-echo -- LLDP PORT ID: ${${intf}.lldp/portid}
-echo -- LLDP PORT DESC: ${${intf}.lldp/portdesc}
-echo -- LLDP SYSTEM NAME: ${${intf}.lldp/systemname}
-echo -- LLDP SYSTEM DESC: ${${intf}.lldp/systemdesc}
 
 :vlanid
 set count:int32 -1
@@ -67,12 +60,20 @@ set count:int32 -1
 set count:int32 -1
 :next_sw
   inc count
-  isset ${sw_name_${count}} || goto alien_register
+  isset ${sw_name_${count}} || goto retry_poll_lldp -- not a switch LLDP packet
   iseq ${sw_name_${count}} ${${intf}.lldp/chassisid} || goto next_sw
   set rfs_id ${sw_rfs_${count}}
   set hfs_id ${sw_hfs_${count}}
   set room ${sw_room_${count}}
 :end_sw
+
+echo -- Got an LLDP packet from ${${intf}.lldp/lldpsource}
+
+echo -- LLDP CHASSIS ID: ${${intf}.lldp/chassisid}
+echo -- LLDP PORT ID: ${${intf}.lldp/portid}
+echo -- LLDP PORT DESC: ${${intf}.lldp/portdesc}
+echo -- LLDP SYSTEM NAME: ${${intf}.lldp/systemname}
+echo -- LLDP SYSTEM DESC: ${${intf}.lldp/systemdesc}
 
 set hostname ${short_${room}}-r
 set mtype user
